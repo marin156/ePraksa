@@ -1,0 +1,100 @@
+﻿@model PracticeManagement.Core.ViewModel.StudentRatingIndexViewModel
+@{
+    ViewBag.Title = "Student ratings";
+}
+
+<div class="col-md-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h3>@ViewBag.Title</h3>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+            <table id="student_ratings" class=" data table table-striped no-margin">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Student</th>
+                        <th>Internship</th>
+                        <th>End date</th>
+                        <th>Rating</th>
+                        <th><a href="@Url.Action("Create", "StudentRatings")" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i>Add</a></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.StudentRatings)
+                    {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.StudentInternship.Student.Name</td>
+                        <td>@item.StudentInternship.Internship.Name</td>
+                        <td>
+                            @String.Format("{0:yyyy/MM/dd}", item.StudentInternship.EndDate)
+                        </td>
+                        <td>
+                            @Html.Hidden(item.RatingType.Value.ToString())
+                            @for (int i = 0; i < item.RatingType.Value; i++)
+                            {
+                                <span class="glyphicon glyphicon-star"></span>
+                            }
+                            @for (int i = item.RatingType.Value; i < 5; i++)
+                            {
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "StudentRatings", new { id = item.Id })" class="btn btn-default btn-xs"><i class="fa fa-folder"></i>Details</a>
+                            @{
+                                double days = -1;
+                                if (item.StudentInternship.EndDate != null)
+                                {
+                                    DateTime endDate = Convert.ToDateTime(item.StudentInternship.EndDate);
+                                    DateTime today = System.DateTime.Now.Date;
+                                    days = today.Subtract(endDate).TotalDays;
+                                }
+                                if (days >= 0 && days <= 20)
+                                {
+                                    <a href="@Url.Action("Edit","StudentRatings", new { id = item.Id })" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i>Edit</a>
+                                    <button class="btn btn-danger btn-xs js-delete" data-rating-id="@item.Id"><i class="fa fa-trash-o"></i>Delete</button>
+                                }
+                                else
+                                {
+                                    <a disabled="disabled" class="btn btn-info btn-xs"><i class="fa fa-folder"></i>Edit</a>
+                                    <button disabled="disabled" class="btn btn-danger btn-xs js-delete"><i class="fa fa-trash-o"></i>Delete</button>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function() {
+            var table = $('#student_ratings').DataTable();
+
+            $("#student_ratings").on("click", ".js-delete", function () {
+                var button = $(this);
+
+                bootbox.confirm("Are you sure to delete this rating?", function(result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("Delete")' + "/" + button.attr("data-rating-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

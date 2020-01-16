@@ -1,0 +1,72 @@
+﻿@using PracticeManagement.Core.Models
+@model PracticeManagement.Core.ViewModel.StudentRatingDetailViewModel
+@{
+    ViewBag.Title = "Rating details";
+}
+<!-- load partial here-->
+<div id="MyModal" class="modal fade in">
+    <div class="modal-dialog " style="width: 900px;">
+        <div class="modal-content">
+            <div id="MyModalContent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <div class="x_title">
+                    <h3>@ViewBag.Title</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 profile_left ">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <span class="section">Student</span>
+                        <ul class="list-unstyled user_data">
+                            <li> <i class=""><strong>Id:</strong> @Model.Student.Id</i></li>
+                            <li> <i class=""><strong>Name:</strong> @Model.Student.Name</i></li>
+                            <li> <i class=""><strong>Faculty:</strong> @Model.Student.Faculty.Name</i></li>
+                            <li> <i class=""><strong>Course:</strong> @Model.Student.FacultyCourse.Course</i></li>
+                            <li> <i class=""><strong>Avg. rating:</strong> @String.Format("{0:n2}", Model.AvgRating)</i></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <span class="section">Internship</span>
+                        <ul class="list-unstyled user_data">
+                            <li> <i class=""><strong>Name:</strong> @Model.Internship.Name</i></li>
+                            <li> <i class=""><strong>Period:</strong> @String.Format("{0:dd/MM/yyyy}", Model.StudentInternship.StartDate) - @String.Format("{0:dd/MM/yyyy}", Model.StudentInternship.EndDate)</i></li>
+                            <li> <i class=""><strong>Mentor:</strong> @Model.StudentInternship.Mentor.MentorName</i></li>
+                            <li>
+                                <i class="">
+                                    <strong>Rating: </strong>
+                                    @for (int i = 0; i < Model.StudentRating.RatingType.Value; i++)
+                                    {
+                                        <span class="glyphicon glyphicon-star"></span>
+                                    }
+                                    @for (int i = Model.StudentRating.RatingType.Value; i < 5; i++)
+                                    {
+                                        <span class="glyphicon glyphicon-star-empty"></span>
+                                    }
+                                </i>
+                            </li>
+                            <li> <i class=""><strong>Comment:</strong> @Model.StudentRating.Comment</i></li>
+                            <li> <i class=""><strong>Rating date:</strong> @Model.StudentRating.Date.ToShortDateString()</i></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="ln_solid"></div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                        <a href="@Url.Action("Index", "StudentRatings")" class="btn btn-default">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

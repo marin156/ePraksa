@@ -1,0 +1,128 @@
+﻿@model PracticeManagement.Core.ViewModel.QuotaFormViewModel
+@{
+    ViewBag.Title = Model.Heading;
+}
+<div class="page-title">
+    <div class="title_left">
+        <h3>Edit Quota</h3>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-6 col-xs-12">
+
+        <div class="x_panel">
+            <div class="x_content form-horizontal">
+                @using (Html.BeginForm())
+                {
+
+                    @Html.ValidationSummary(true)
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">College<span class="required">*</span> </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            @Html.DropDownListFor(m => m.Faculty, new SelectList(Model.Faculties, "Id", "Name"), "Select one", new { @class = "form-control col-md-7 col-xs-12" })
+                            @Html.ValidationMessageFor(m => m.Faculty)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Date from<span class="required">*</span> </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+
+                            @Html.TextBoxFor(m => m.DateFrom, new { @class = "form-control col-md-7 col-xs-12 date" })
+                            @Html.ValidationMessageFor(m => m.DateFrom)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Date to<span class="required">*</span> </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+
+                            @Html.TextBoxFor(m => m.DateTo, new { @class = "form-control col-md-7 col-xs-12 date" })
+                            @Html.ValidationMessageFor(m => m.DateTo)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Number of students<span class="required">*</span> </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number" })
+                            @Html.ValidationMessageFor(m => m.Amount)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Type <span class="required">*</span></label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            @Html.DropDownListFor(m => m.PracticeType, new SelectList(Model.PracticeTypes, "Id", "Description"), "Select one", new { @class = "form-control col-md-7 col-xs-12" })
+                            @Html.ValidationMessageFor(m => m.PracticeType)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Description <span class="required">*</span></label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Description)
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Status <span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="radio">
+                                    <label> @Html.RadioButtonFor(model => model.Status, "true", new { @class = "flat" }) Active </label>
+                                    <label> @Html.RadioButtonFor(model => model.Status, "false", new { @class = "flat" }) Inactive </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-4">
+                                <a href="@Url.Action("Index", "Quotas")" class="btn btn-default">Back</a>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </div>
+
+                        }
+                    </div>
+                </div>
+    </div>
+
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $('.date').datepicker({
+            minDate: 0,
+            format: "dd.mm.yyyy",
+            todayHighlight: true,
+            clearBtn: true,
+            orientation: "bottom left",
+            autoclose: true
+        });
+        $('.time').clockpicker({
+            placement: 'bottom',
+            align: 'left',
+            donetext: 'Done',
+            twentyfourhour: true
+        });
+
+
+        jQuery.validator.methods.date = function (value, element) {
+            var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            var s = value.substring(3, 5) + "/" + value.substring(0, 2) + "/" + value.substring(6, 8);
+            if (isChrome) {
+                var d = new Date();
+                return this.optional(element) || !/Invalid|NaN/.test(new Date(d.toLocaleDateString(s)));
+            } else {
+                return this.optional(element) || !/Invalid|NaN/.test(new Date(s));
+            }
+        };
+
+
+    </script>
+
+}
+

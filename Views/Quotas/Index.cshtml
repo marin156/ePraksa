@@ -1,0 +1,98 @@
+﻿@model IEnumerable<PracticeManagement.Core.Models.Quota>
+@{
+    ViewBag.Title = "Quotas";
+}
+
+<div class="col-md-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h3>Quotas</h3>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+            <table id="quotas" class=" data table table-striped no-margin">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date from</th>
+                        <th>Date to</th>
+                        <th>Amount</th>
+                        <th>Fakultet</th>
+                        <th>Status</th>
+                        <th><a href="@Url.Action("Create","Quotas")" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i>Add</a></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.DateFrom.ToString("dd.MM.yyyy.")</td>
+                            <td>@item.DateTo.ToString("dd.MM.yyyy.")</td>
+                            <td>@item.StudentAmount</td>
+                            <td>@item.Faculty.Name</td>
+                            <td>@{
+                                    if(item.Activated == true)
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:greenyellow" class="badge" readonly>Inactive</a>
+                                    }
+                                }</td>
+                            <td>
+                                <a href="@Url.Action("Edit","Quotas", new { id = item.Id})" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i>Edit</a>
+                                <button class="btn btn-default btn-xs js-toggle" data-quota-id="@item.Id"><i class="fa fa-folder"></i>@(item.Activated ? "Deactivate" : "Activate")</button>
+                                <button class="btn btn-danger btn-xs js-delete" data-quota-id="@item.Id"><i class="fa fa-trash-o"></i>Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function() {
+            var table = $('#quotas').DataTable();
+
+        $("#quotas").on("click", ".js-delete", function () {
+            var button = $(this);
+
+            bootbox.confirm("Are you sure to delete this quota?", function (result) {
+                if (result) {
+                    $.ajax({
+                        url: "/quotas/delete/" + button.attr("data-quota-id"),
+                        method: "DELETE",
+                        success: function () {
+                            table.row(button.parents("tr")).remove().draw();
+                        }
+                    });
+                }
+            });
+            });
+            $("#quotas").on("click", ".js-toggle", function () {
+                var button = $(this);
+
+                bootbox.confirm("Toggle the status of this quota?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/quotas/togglestatus/" + button.attr("data-quota-id"),
+                            method: "POST",
+                            success: function () {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+    });
+    </script>
+}
